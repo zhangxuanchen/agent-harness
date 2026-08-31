@@ -1,0 +1,40 @@
+# License
+
+本仓库包含两类内容，适用不同许可协议。
+
+---
+
+## book/ — 书籍文本
+
+[Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+
+**CC BY-NC-SA 4.0**
+
+- ✅ 允许：转载、翻译、改编，需署名 + 相同方式共享
+- ❌ 禁止：未经授权的商业出版、销售
+- ℹ️ 纸书出版授权需单独联系作者
+
+全文见 [book/LICENSE](book/LICENSE)
+
+---
+
+## codepilot/ — 源代码
+
+[MIT License](https://opensource.org/licenses/MIT)
+
+**MIT**
+
+- ✅ 允许：商业使用、修改、分发、私下使用
+- ℹ️ 仅需保留原作者版权声明
+
+全文见 [codepilot/LICENSE](codepilot/LICENSE)
+
+---
+
+## 贡献
+
+向本仓库提交 Pull Request 即表示你同意将代码部分以 MIT、文本部分以 CC BY-NC-SA 4.0 许可。
+
+---
+
+© 2026 本书作者. All Rights Reserved for commercial publishing.

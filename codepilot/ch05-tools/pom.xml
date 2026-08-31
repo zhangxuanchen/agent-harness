@@ -1,0 +1,45 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+    <parent><groupId>io.etclovg</groupId><artifactId>codepilot</artifactId><version>1.0.0-SNAPSHOT</version></parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>codepilot-ch05-tools</artifactId>
+    <name>Ch05 · T 层 — 工具接口与协议</name>
+    <dependencies>
+        <dependency><groupId>io.etclovg</groupId><artifactId>codepilot-core</artifactId></dependency>
+        <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter</artifactId></dependency>
+        <dependency><groupId>io.agentscope</groupId><artifactId>agentscope-core</artifactId></dependency>
+        <dependency><groupId>com.fasterxml.jackson.core</groupId><artifactId>jackson-databind</artifactId></dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- 在 generate-test-resources 阶段输出运行时依赖 classpath 到文件，
+                 供 McpIntegrationTest 启动 Server 子进程时拼接完整 classpath -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>build-test-classpath</id>
+                        <phase>generate-test-resources</phase>
+                        <goals><goal>build-classpath</goal></goals>
+                        <configuration>
+                            <outputFile>${project.build.directory}/test-classpath.txt</outputFile>
+                            <includeScope>runtime</includeScope>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemPropertyVariables>
+                        <main.classes.dir>${project.build.outputDirectory}</main.classes.dir>
+                        <test.classes.dir>${project.build.testOutputDirectory}</test.classes.dir>
+                        <dep.classpath.file>${project.build.directory}/test-classpath.txt</dep.classpath.file>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

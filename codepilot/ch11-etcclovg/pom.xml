@@ -1,0 +1,27 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+    <parent><groupId>io.etclovg</groupId><artifactId>codepilot</artifactId><version>1.0.0-SNAPSHOT</version></parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>codepilot-ch11-etcclovg</artifactId>
+    <name>Ch11 · ETCLOVG 全层配置</name>
+    <dependencies>
+        <dependency><groupId>io.etclovg</groupId><artifactId>codepilot-core</artifactId></dependency>
+        <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter</artifactId></dependency>
+        <dependency><groupId>io.agentscope</groupId><artifactId>agentscope-core</artifactId></dependency>
+        <dependency><groupId>com.fasterxml.jackson.core</groupId><artifactId>jackson-databind</artifactId></dependency>
+
+        <!-- ── ETCLOVG 七层运行期实现 Bean：ch11-etcclovg 是全景装配模块，
+             依赖 ch01-ch10 以提供各层 Middleware @Component Bean（G/C/T/L/V/O + E 沙箱）。
+             层间仍通过 MiddlewareBase 接口 + @Qualifier 松耦合，不直接 import 各层实现类。 ── -->
+        <dependency><groupId>io.etclovg</groupId><artifactId>codepilot-ch01-foundation</artifactId></dependency>
+        <dependency><groupId>io.etclovg</groupId><artifactId>codepilot-ch02-definition</artifactId></dependency>
+        <dependency><groupId>io.etclovg</groupId><artifactId>codepilot-ch04-sandbox</artifactId></dependency>
+        <dependency><groupId>io.etclovg</groupId><artifactId>codepilot-ch05-tools</artifactId></dependency>
+        <dependency><groupId>io.etclovg</groupId><artifactId>codepilot-ch06-memory</artifactId></dependency>
+        <dependency><groupId>io.etclovg</groupId><artifactId>codepilot-ch07-orchestration</artifactId></dependency>
+        <dependency><groupId>io.etclovg</groupId><artifactId>codepilot-ch08-observability</artifactId></dependency>
+        <dependency><groupId>io.etclovg</groupId><artifactId>codepilot-ch09-evaluation</artifactId></dependency>
+        <dependency><groupId>io.etclovg</groupId><artifactId>codepilot-ch10-governance</artifactId></dependency>
+
+        <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-test</artifactId><scope>test</scope></dependency>
+    </dependencies>
+</project>

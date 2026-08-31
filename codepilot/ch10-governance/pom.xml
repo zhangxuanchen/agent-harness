@@ -1,0 +1,21 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+    <parent><groupId>io.etclovg</groupId><artifactId>codepilot</artifactId><version>1.0.0-SNAPSHOT</version></parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>codepilot-ch10-governance</artifactId>
+    <name>Ch10 · G 层 — 安全治理与审计</name>
+
+    <dependencies>
+        <dependency><groupId>io.etclovg</groupId><artifactId>codepilot-core</artifactId></dependency>
+        <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter</artifactId></dependency>
+        <dependency><groupId>io.agentscope</groupId><artifactId>agentscope-core</artifactId></dependency>
+        <dependency><groupId>com.fasterxml.jackson.core</groupId><artifactId>jackson-databind</artifactId></dependency>
+        <dependency><groupId>com.fasterxml.jackson.dataformat</groupId><artifactId>jackson-dataformat-yaml</artifactId></dependency>
+
+        <!-- AgentScope OpenAI 模型扩展，用于 LLM-based guard classification -->
+        <dependency>
+            <groupId>io.agentscope</groupId>
+            <artifactId>agentscope-extensions-model-openai</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+</project>

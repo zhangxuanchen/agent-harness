@@ -1,0 +1,158 @@
+spring:
+  application:
+    name: codepilot
+  main:
+    web-application-type: none
+    banner-mode: off
+
+  # NOTE: 模型配置已迁移至 AgentScope 2.0（io.agentscope），不再使用 Spring AI。
+  # AgentScope 通过代码中的模型 URI + 环境变量解析凭证，无需 YAML 配置：
+  #   - OpenAI:    模型 URI "openai:gpt-4o"      → 读取环境变量 OPENAI_API_KEY
+  #   - DashScope: 模型 URI "dashscope:qwen-plus" → 读取环境变量 DASHSCOPE_API_KEY
+  #   - Ollama:    模型 URI "ollama:qwen2.5"      → 可选 OLLAMA_BASE_URL（默认 http://localhost:11434）
+  # 各 Agent 在构造时通过 ReActAgent.builder().model("dashscope:qwen-plus").build() 指定模型。
+
+  datasource:
+    url: jdbc:sqlite:${user.home}/.codepilot/memory/episodic.db
+    driver-class-name: org.sqlite.JDBC
+
+# === C 层 · 上下文记忆配置 ===
+codepilot:
+  memory:
+    budget:
+      max-total-tokens: 128000
+      system-ratio: 0.10
+      task-ratio: 0.05
+      retrieval-ratio: 0.15
+      tools-ratio: 0.40
+      headroom-ratio: 0.30
+      overage-warning-threshold: 0.85
+
+    working:
+      recent-full-turns: 5
+      compaction-trigger-turns: 15
+      max-active-tokens: 12000
+      compaction-strategy: STRUCTURED_SUMMARY
+
+    episodic:
+      fts5-table-name: episodic_memory
+      max-events-per-query: 5
+      time-decay-lambda: 0.05
+      confidence-threshold: 0.7
+      auto-extract-on-session-end: true
+
+    semantic:
+      distillation-schedule: "0 0 2 * * SUN"
+      distillation-confidence-threshold: 3
+      kv-store: in-memory
+
+    kv-cache:
+      stable-prefix-enabled: true
+      zero-dynamic-content: true
+      prefix-cache-ttl-minutes: 60
+      hit-rate-monitoring: true
+
+    compaction:
+      strategy: STRUCTURED
+      preserve-numerics: true
+      probe-interval: 5
+      decay-threshold: 0.6
+
+    lost-in-middle:
+      mitigation-enabled: true
+      critical-constraint-reinjection-turns: 10
+      tail-positioning: true
+      structured-bullet-injection: true
+
+  # === O 层 · 可观测性与成本管控 ===
+  observability:
+    cost:
+      tracking:
+        enabled: true
+        log-every-n-calls: 100
+      model-pricing:
+        gpt-4o:
+          input: 0.005
+          output: 0.015
+        gpt-4o-mini:
+          input: 0.00015
+          output: 0.0006
+        gpt-4-turbo:
+          input: 0.01
+          output: 0.03
+        claude-3.5-sonnet:
+          input: 0.003
+          output: 0.015
+        deepseek-v3:
+          input: 0.00027
+          output: 0.0011
+        default:
+          input: 0.002
+          output: 0.006
+
+    burn-rate:
+      window-minutes: 5
+      budget-per-minute: 0.10
+      total-budget: 100.00
+      alert-thresholds:
+        warn: 1.5
+        degrade: 2.0
+        fuse: 3.0
+      degrade:
+        enabled: true
+        fallback-model: gpt-4o-mini
+        restore-after-minutes: 10
+
+    event-log:
+      enabled: true
+      dir: ${user.home}/.codepilot/events
+      max-lines-per-file: 10000
+      retention-days: 30
+      compression: false
+
+  # === G 层 · 安全治理配置 ===
+  governance:
+    input-guard:
+      checkpoints:
+        input: true
+        tool: true
+        output: true
+        session: true
+      l1-regex:
+        enabled: true
+        patterns:
+          custom: []
+      l2-classifier:
+        enabled: true
+        block-threshold: 0.7
+        escalate-threshold: 0.4
+      l3-llm:
+        enabled: true
+      session:
+        max-cumulative-risk: 0.8
+        max-violations: 5
+        cooldown-minutes: 30
+
+    constitution:
+      config-path: constitution.yml
+      hot-reload: true
+      reload-interval-seconds: 60
+
+    audit:
+      worm-log:
+        enabled: true
+        max-in-memory-entries: 100000
+      merkle:
+        auto-build-interval: 64
+        algorithm: SHA-256
+      sanitization:
+        enabled: true
+        patterns:
+          - api-key:    "sk-[A-Za-z0-9]{32,}"
+          - token:      "Bearer\\s+[A-Za-z0-9_\\-.]{20,}"
+          - email:      "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z]{2,}"
+          - credit-card: "\\b\\d{16}\\b"
+
+logging:
+  level:
+    io.etclovg.codepilot: DEBUG

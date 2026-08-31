@@ -1,0 +1,126 @@
+# ============================================================================
+# CodePilot Governance Constitution v1.0
+# YAML 声明式治理章程
+# 规则变更无需重新部署——修改此文件后由 ConstitutionValidator 热加载
+# ============================================================================
+
+version: "1.0"
+description: "CodePilot 默认治理章程——保护 AI Agent 安全合规运行"
+
+rules:
+  # ===== 内容安全 =====
+  - id: "no-hate-speech"
+    description: "禁止仇恨言论"
+    scope: ["INPUT", "OUTPUT"]
+    checks:
+      - type: "llm"
+        value: "内容是否包含基于种族、宗教、性别、国籍等的仇恨言论或歧视性内容"
+    action: "BLOCK"
+    severity: "CRITICAL"
+    reason: "违反内容安全政策 §C.1——系统和用户交互中不得包含仇恨言论或歧视性内容"
+
+  - id: "no-personal-attacks"
+    description: "禁止人身攻击"
+    scope: ["INPUT", "OUTPUT"]
+    checks:
+      - type: "regex"
+        value: "(idiot|stupid|dumb|moron|fool)\\s+(you|assistant|AI)"
+      - type: "contains"
+        value: "you suck"
+    action: "BLOCK"
+    severity: "HIGH"
+    reason: "违反文明交互原则——对话中不得使用人身攻击语言 (§Governance 10.2.1)"
+
+  - id: "no-self-harm"
+    description: "禁止自残/自杀引导内容"
+    scope: ["INPUT", "OUTPUT"]
+    checks:
+      - type: "llm"
+        value: "内容是否鼓励、描述或提供自残、自杀的具体方法或引导"
+    action: "BLOCK"
+    severity: "CRITICAL"
+    reason: "违反安全政策 §C.3——严禁包含自残、自杀相关引导或描述内容"
+
+  # ===== 合规 =====
+  - id: "no-illegal-advice"
+    description: "禁止提供违法操作建议"
+    scope: ["OUTPUT"]
+    checks:
+      - type: "llm"
+        value: "内容是否包含违法操作的具体步骤、方法或建议"
+    action: "BLOCK"
+    severity: "CRITICAL"
+    reason: "违反合规政策 §A.3——不得提供违法操作的具体建议或步骤"
+
+  - id: "no-weapons-instruction"
+    description: "禁止武器/爆炸物制造指导"
+    scope: ["OUTPUT"]
+    checks:
+      - type: "contains"
+        value: "制造武器"
+      - type: "contains"
+        value: "制作爆炸物"
+      - type: "contains"
+        value: "合成毒品"
+      - type: "llm"
+        value: "内容是否提供武器、爆炸物、管制化学品制造的具体步骤或配方"
+    action: "BLOCK"
+    severity: "CRITICAL"
+    reason: "违反合规政策 §A.5——严禁提供武器制造、爆炸物制作或毒品合成指导"
+
+  # ===== 数据安全 =====
+  - id: "no-data-exfiltration"
+    description: "禁止数据/凭据泄露"
+    scope: ["OUTPUT"]
+    checks:
+      - type: "contains"
+        value: "API_KEY"
+      - type: "contains"
+        value: "SECRET"
+      - type: "contains"
+        value: "PASSWORD"
+      - type: "regex"
+        value: "sk-[a-zA-Z0-9]{32,}"
+      - type: "regex"
+        value: "Bearer\\s+[A-Za-z0-9_\\-.]{20,}"
+    action: "BLOCK"
+    severity: "CRITICAL"
+    reason: "违反数据安全政策 §B.1——不得在输出中暴露任何 API 密钥、密码或访问令牌"
+
+  - id: "no-malicious-urls"
+    description: "禁止恶意/钓鱼链接"
+    scope: ["INPUT", "OUTPUT"]
+    checks:
+      - type: "url"
+        value: ""
+    action: "BLOCK"
+    severity: "MEDIUM"
+    reason: "URL 数量超出合理范围——可能存在垃圾链接或钓鱼重定向攻击"
+
+  # ===== 质量管控 =====
+  - id: "max-output-length"
+    description: "输出长度限制"
+    scope: ["OUTPUT"]
+    checks:
+      - type: "length"
+        value: "50000"
+    action: "WARN"
+    severity: "LOW"
+    reason: "输出长度超限——对每条请求的响应长度设置上限以控制资源消耗"
+
+  # ===== Prompt 注入防护 =====
+  - id: "no-jailbreak"
+    description: "禁止越狱/提示词注入攻击"
+    scope: ["INPUT"]
+    checks:
+      - type: "regex"
+        value: "ignore\\s+(all\\s+)?(previous|prior|above)\\s+instructions?"
+      - type: "regex"
+        value: "(you\\s+are|act\\s+as|pretend\\s+to\\s+be)\\s+(now|from\\s+now\\s+on)\\s+DAN"
+      - type: "regex"
+        value: "forget\\s+(all\\s+)?(your|the)\\s+(training|rules|guidelines)"
+      - type: "regex"
+        value: "reveal\\s+(your|the)\\s+(system\\s+)?prompt"
+    action: "BLOCK"
+    severity: "CRITICAL"
+    reason: "违反系统安全政策 §D.1——禁止通过提示词注入绕过系统指令或越狱模型限制"

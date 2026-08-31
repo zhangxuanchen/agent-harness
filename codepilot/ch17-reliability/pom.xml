@@ -1,0 +1,14 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+    <parent><groupId>io.etclovg</groupId><artifactId>codepilot</artifactId><version>1.0.0-SNAPSHOT</version></parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>codepilot-ch17-reliability</artifactId>
+    <name>Ch17 · 生产监控可靠性与成本</name>
+    <dependencies>
+        <dependency><groupId>io.etclovg</groupId><artifactId>codepilot-core</artifactId></dependency>
+        <!-- ch17 复用 ch08 的 BurnRateCalculator / CostTracker（§17.2.1 燃烧率监控） -->
+        <dependency><groupId>io.etclovg</groupId><artifactId>codepilot-ch08-observability</artifactId></dependency>
+        <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter</artifactId></dependency>
+        <dependency><groupId>io.agentscope</groupId><artifactId>agentscope-core</artifactId></dependency>
+        <dependency><groupId>com.fasterxml.jackson.core</groupId><artifactId>jackson-databind</artifactId></dependency>
+    </dependencies>
+</project>

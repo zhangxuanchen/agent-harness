@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.etclovg</groupId>
+        <artifactId>codepilot</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>codepilot-starter</artifactId>
+    <name>CodePilot · 统一启动入口</name>
+    <description>单一 Spring Boot 应用，统一管理所有章节模块</description>
+
+    <dependencies>
+        <!-- ETCLOVG 核心层 -->
+        <dependency>
+            <groupId>io.etclovg</groupId>
+            <artifactId>codepilot-core</artifactId>
+        </dependency>
+
+        <!-- 各章节模块 -->
+        <dependency>
+            <groupId>io.etclovg</groupId>
+            <artifactId>codepilot-ch01-foundation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.etclovg</groupId>
+            <artifactId>codepilot-ch04-sandbox</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.etclovg</groupId>
+            <artifactId>codepilot-ch05-tools</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.etclovg</groupId>
+            <artifactId>codepilot-ch06-memory</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.etclovg</groupId>
+            <artifactId>codepilot-ch07-orchestration</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.etclovg</groupId>
+            <artifactId>codepilot-ch08-observability</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.etclovg</groupId>
+            <artifactId>codepilot-ch09-evaluation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.etclovg</groupId>
+            <artifactId>codepilot-ch10-governance</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.etclovg</groupId>
+            <artifactId>codepilot-ch12-model</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.etclovg</groupId>
+            <artifactId>codepilot-ch13-data</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.etclovg</groupId>
+            <artifactId>codepilot-ch14-planning</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.etclovg</groupId>
+            <artifactId>codepilot-ch15-multiagent</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.etclovg</groupId>
+            <artifactId>codepilot-ch16-mlops</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.etclovg</groupId>
+            <artifactId>codepilot-ch17-reliability</artifactId>
+        </dependency>
+
+        <!-- AgentScope 模型扩展（OpenAI），为统一启动入口提供模型实现 -->
+        <dependency>
+            <groupId>io.agentscope</groupId>
+            <artifactId>agentscope-extensions-model-openai</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.agentscope</groupId>
+            <artifactId>agentscope-extensions-model-dashscope</artifactId>
+        </dependency>
+
+        <!-- SQLite for episodic memory -->
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.46.1.0</version>
+        </dependency>
+
+        <!-- Jackson YAML for governance constitution -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>io.etclovg.codepilot.CodepilotApplication</mainClass>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
