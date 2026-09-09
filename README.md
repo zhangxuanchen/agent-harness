@@ -1,1 +1,110 @@
-# agent-harness
+# 《Agent Harness 工程：构建可靠智能体系统的工程方法》
+
+一本讲 **如何把 Agent 从 Demo 做到生产** 的工程书。书稿与配套教学代码均在本仓库。
+
+核心论点：**模型决定上限，Harness 决定可靠性**。
+
+Agent 从 Demo 到生产的差距不在模型能力，而在模型之外的工程层——沙箱、工具、上下文、编排、观测、评估、治理。一个 10 步任务，即使单步成功率 95%，端到端也只有 60%（Lusser 定律）。本书提出 **ETCLOVG 七层架构**，把"模型之外的一切工程手段"组织成可逐层施工、逐层验收的体系，回答一个问题：**怎么让 Agent 可靠地跑完任务**。
+
+公开证据支撑这一论点：
+
+- SWE-agent 在 SWE-bench 上从 3.8% 提升到 12.5%——纯工具接口设计改进，未换模型（+229%）
+- LangChain "Deep Agents" 在 Terminal Bench 2.0 上从 52.8% 提升到 66.5%——仅 Harness 改进，未动模型权重（+26%）
+
+## ETCLOVG 七层架构
+
+**Agent = Model + Harness**。模型是概率引擎，Harness 是把概率输出约束成确定性行为的工程外壳。
+
+| 层 | 名称 | 解决的问题 |
+|----|------|-----------|
+| **E** | Execution 执行环境 | Agent 的操作在哪里跑、炸了会不会伤到宿主：沙箱隔离、资源配额、快照回滚、超时熔断 |
+| **T** | Tool 工具接口 | Agent 怎么调用外部能力：工具四元组与五要素描述、Function Calling / MCP / A2A 协议、工具治理流水线、幂等与重试 |
+| **C** | Context 上下文记忆 | 窗口里放什么、怎么压缩、跨会话怎么记：五区预算、三层记忆、KV-cache 前缀复用、会话恢复 |
+| **L** | Lifecycle 生命周期编排 | Agent 怎么循环、什么时候停、多 Agent 怎么协作：ReAct 工程化、四种编排模式、PipeReAct、状态机与检查点 |
+| **O** | Observability 可观测性 | 跑的过程怎么看得见：推理轨迹 Trace、业务/任务/调用三层指标、成本归因、行为回放与时间旅行 |
+| **V** | Verification 验证评估 | 跑出来的结果好不好：EDD 评估驱动开发、四阶段质量控制、LLM-as-Judge 偏差治理、影子流量与 A/B |
+| **G** | Governance 治理安全 | 出了事谁负责：输入/工具/输出/会话四检查点、声明式规则、供应链安全、审计日志与归责 |
+
+## 仓库结构
+
+```
+agent-harness/
+├── book/        书稿（Markdown，19 章 + 3 个速查附录）
+└── codepilot/   配套 Java 教学代码（AgentScope 2.x，21 个 Maven 模块）
+```
+
+## 章节导览
+
+全书分五个部分、19 章、约 147 个知识点（KP）。每个 KP 带标签：【构建】讲工程方案与代码实现，【诊断】讲问题分析与故障模式。
+
+### Part 1 基础篇：从聊天到自主
+
+| 章 | 标题 | 内容 |
+|----|------|------|
+| [01](book/chapter-01-Agent-工程全景与前置知识-修订版.md) | Agent 工程全景与前置知识 | Agent 判定标准与自主度分级（L1-L3）、Harness 是什么、框架选型、第一个 Agent |
+| [02](book/chapter-02-重新定义Agent-从聊天到自主-修订版.md) | 重新定义 Agent：从聊天到全自主 | 三波浪潮、PDA 闭环及其失败模式、为什么 Harness 工程在 2025-2026 年成为独立方向 |
+| [03](book/chapter-03-Agent-行为诊断-设计模式实战问题地图-修订版.md) | Agent 行为诊断 | 五类典型故障模式、为什么换模型不解决问题、五类故障如何映射到七层防御 |
+
+### Part 2 ETCLOVG 七层 Harness 详解
+
+| 章 | 层 | 标题 |
+|----|----|------|
+| [04](book/chapter-04-E-执行环境与沙箱-修订版.md) | **E** | 执行环境与沙箱：五维隔离、五种沙箱选型（进程/Docker/K8s/E2B/Daytona）、TCO 决策、三层文件系统 |
+| [05](book/chapter-05-T-工具接口与协议-修订版.md) | **T** | 工具接口与协议：四元组模型与五要素框架、FC / MCP / A2A、工具发现治理与编排、幂等/可追踪/超时重试 |
+| [06](book/chapter-06-C-上下文记忆管理-修订版.md) | **C** | 上下文记忆管理：注意力衰减、五区预算、KV-cache、工作记忆压缩、会话恢复、多 Agent 上下文治理 |
+| [07](book/chapter-07-L-生命周期与编排-修订版.md) | **L** | 生命周期与编排：ReAct 循环收敛性、管道/黑板/层级/网状四种模式、基准决策树、PipeReAct、Issue→PR 完整管道、状态机与检查点 |
+| [08](book/chapter-08-O-可观测性-修订版.md) | **O** | 可观测性：Middleware 链观测注入、推理轨迹可视化、三层指标体系、成本归因、时间旅行调试 |
+| [09](book/chapter-09-V-验证与评估-修订版.md) | **V** | 验证与评估：评估四重困难、EDD 四阶段、锚定/就绪/嵌入式评判/回归四阶段循环、LLM-as-Judge 偏差、影子流量 |
+| [10](book/chapter-10-G-治理与安全-修订版.md) | **G** | 治理与安全：四个安全检查点、声明式规则、提示注入防御、供应链安全、合规与归责、防御性编程七条铁律 |
+| [11](book/chapter-11-ETCLOVG回顾-修订版.md) | — | 全景组装：七层交互矩阵、七层 Middleware 一次性注册、执行顺序 G→C→E→T→L→V→O |
+
+### Part 3 进阶篇：模型、数据与决策
+
+| 章 | 标题 | 内容 |
+|----|------|------|
+| [12](book/chapter-12-模型层工程-修订版.md) | 模型层工程 | 能力×成本×延迟选择三角、三层模型路由与优雅降级、Prefix Caching、模型漂移检测 |
+| [13](book/chapter-13-数据知识与工具制造-修订版.md) | 数据、知识与工具制造 | RAG/知识图谱/SQL 三层知识路由、五阶段工具制造安全管线、五阶段数据飞轮 |
+| [14](book/chapter-14-规划推理与决策-修订版.md) | 规划、推理与决策 | ReAct/Plan-Execute/ToT/ReWOO 成本模型、范式选型判据、规划失败修复、不确定性管理与人机交接 |
+| [15](book/chapter-15-多Agent系统与协作-修订版.md) | 多 Agent 系统与协作 | 单 Agent 三重天花板、Agent/Session 分离、任务分解 DAG、MAST 协调失败模式、级联故障五道防线 |
+
+### Part 4 生产化与规模化
+
+| 章 | 标题 | 内容 |
+|----|------|------|
+| [16](book/chapter-16-Agent-MLOps与评估流水线-修订版.md) | Agent MLOps 与评估流水线 | 四阶段 CI/CD 门禁、Agent Bundle、渐进式 Canary、五步事故复盘、Demo 到生产四阶段路线图 |
+| [17](book/chapter-17-生产监控可靠性与成本-修订版.md) | 生产监控、可靠性与成本 | 五种节点差异化 SLI、燃烧率异常检测、四层硬预算、快中慢三级控制回路、分层 SLO 与错误预算 |
+
+### Part 5 实战与展望
+
+| 章 | 标题 | 内容 |
+|----|------|------|
+| [18](book/chapter-18-案例研究-修订版.md) | 案例研究 | 五系统七层强度对比、企业 Agent 三类场景配置、Devin 公开架构推断、CodePilot 完整复盘 |
+| [19](book/chapter-19-开放问题与未来-修订版.md) | 开放问题与未来 | Harness 最优复杂度、自我进化、跨框架可移植性、每层 ROI、Harness 工程师能力模型 |
+
+完整章节目录（含全部 KP 列表）见 [book/Agent-Harness-全书目录.md](book/Agent-Harness-全书目录.md)。
+
+## 附录速查表
+
+- [附录 A：Agent 故障诊断速查表](book/appendix-A-Agent故障诊断速查表.md)——症状 → 根因 → 解法 → 对应章节，线上排障时直接查
+- [附录 B：Agent 构建方案速查表](book/appendix-B-Agent构建方案速查表.md)——七层各层"问题→方案→代码要点"，写代码时直接查
+- [附录 C：Harness 结构速查表](book/appendix-C-Harness结构速查表.md)——P0/P1/P2 上线门禁、SLO 阈值、Runbook、codepilot 仓库索引与术语表
+
+## 配套代码：CodePilot（codepilot/）
+
+CodePilot 是全书贯穿案例：一个编码辅助 Agent，从裸模型开始逐层叠加 Harness，直到七层完整受控。
+
+- 技术栈：**JDK 21 + Maven + AgentScope 2.x**（agentscope-core / agentscope-harness），Spring Boot 提供装配基座
+- 21 个 Maven 模块：ch01-foundation … ch19-future 共 19 个章节模块 + codepilot-core + codepilot-starter，约 450 个主代码文件、350+ 测试用例
+- 类名和 API 与书稿代码示例逐章对齐；自研教学类集中在 `io.etclovg.codepilot` 包，注释中标注"配套仓库教学实现，非框架内置"
+- 模块说明、章节映射与运行方式见 [codepilot/README.md](codepilot/README.md)
+
+## 阅读建议
+
+- **Agent 开发者（从零构建）**：按顺序读 Part 2，每读完一章对照 codepilot 对应模块跑测试
+- **架构师（做技术决策）**：先读第 3 章（故障模式 → 七层防御映射）和第 11 章（七层协同全景），再按项目瓶颈选层深入
+- **技术管理者（评估投入产出）**：第 1 章（Harness 是什么）、第 16 章（四阶段路线图）、第 17 章（成本与 SLO）、第 18 章（案例复盘）
+- **线上救火**：直接翻[附录 A](book/appendix-A-Agent故障诊断速查表.md)
+
+## 许可证
+
+Apache 2.0，详见 [LICENSE](LICENSE)。
