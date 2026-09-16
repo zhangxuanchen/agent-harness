@@ -354,7 +354,7 @@ AgentScope 内置的 Tracer（AgentScope 的追踪采集门面，统一对接 Pr
 
 AgentScope 的 Middleware 链天然适合做观测注入——每个 Middleware 的 `onAgent()` 方法是天然的 hook 点。但观测代码如果抛异常（如网络超时导致遥测数据发送失败），不应导致业务请求失败。
 
-核心问题是如何让观测"旁路化"——不影响业务但采集完整。观测是辅助，业务是主线。一条 Agent 请求经过 5 个 Middleware——如果第 3 个是观测 Middleware，而它因为遥测后端不可用抛了异常，整个 Agent 请求就会失败。观测 Middleware 必须设计为"失败了不影响业务"的旁路模式。这种设计借鉴了熔断器（Bulkhead）模式——辅助电路失败不应导致主电路中断。
+核心问题是如何让观测"旁路化"——不影响业务但采集完整。观测是辅助，业务是主线。一条 Agent 请求经过 5 个 Middleware——如果第 3 个是观测 Middleware，而它因为遥测后端不可用抛了异常，整个 Agent 请求就会失败。观测 Middleware 必须设计为"失败了不影响业务"的旁路模式。这种设计借鉴了隔舱（Bulkhead）模式——辅助链路不应该拖垮主链路。
 
 实现需要遵循三条原则：所有观测代码包裹 try-catch，异常只记自身 WARN 日志，不传递到主流程；观测 Middleware 放最外层——在 Middleware 链的最外端（先于其他 Middleware 的 onAgent，后于其他 Middleware 的结果处理），确保覆盖所有内层 Middleware 的执行；数据异步批量发送——观测数据不阻塞主线程，写入内存缓冲区，后台线程批量发送。AgentScope Tracer 的 BatchSpanProcessor 提供此能力。
 
