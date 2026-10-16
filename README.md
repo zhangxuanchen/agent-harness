@@ -108,4 +108,7 @@ CodePilot 是全书贯穿案例：一个编码辅助 Agent，从裸模型开始�
 
 ## 许可证
 
-Apache 2.0，详见 [LICENSE](LICENSE)。
+本仓库采用双许可，详见 [LICENSE](LICENSE)：
+
+- **`book/`（书稿文本）**：CC BY-NC-SA 4.0（署名-非商业性使用-相同方式共享）
+- **`codepilot/`（配套源代码）**：MIT License

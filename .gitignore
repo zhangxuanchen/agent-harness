@@ -30,3 +30,11 @@ __pycache__/
 *.tmp
 *.swp
 *~
+
+# AI 工具本地状态（不入库）
+.trae/
+.qoder/
+book/.workbuddy/
+
+# 小红书推广物料（不入库）
+xhs-*
